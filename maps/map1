@@ -1,0 +1,21 @@
+#anthill
+3
+r1 1 1
+#comment
+##start
+r2 2 2
+r3 3 3
+##end
+r4 4 4
+r5 5 5
+r1-r2
+r1-r3
+#comment
+r1-r4
+r1-r5
+r2-r3
+r2-r4
+r2-r5
+r3-r4
+r3-r5
+r4-r5
