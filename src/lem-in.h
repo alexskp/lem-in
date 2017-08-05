@@ -7,42 +7,49 @@
 #include <ctype.h>
 #include <string.h>
 
-typedef struct      adj
+typedef struct          adjacent
 {
-    char            *name;
-    struct adj      *next;
+    struct room         *ptr_adj;
+    struct adjacent     *next;
 } adj;
 
-typedef struct      room
+typedef struct          room
 {
-    char            *name;
-    int             x;
-    int             y;
-    int             dist;
-    adj             *adjacent;
-    struct room     *next;
+    char                *name;
+    int                 x;
+    int                 y;
+    int                 dist;
+    adj                 *adjacent;
+    struct room         *next;
 } room;
 
-typedef struct      graph
+typedef struct          graph
 {
-    int             ants;
-    room            *start_room;
-    room            *end_room;
-    room            *rooms;
+    int                 ants;
+    room                *start_room;
+    room                *end_room;
+    room                *rooms;
 } graph;
 
-typedef struct      proom
-{
-    char            *name;
-    struct proom    *next;
-} proom;
 
-typedef struct      paths
+typedef struct          path_node
 {
-    int             len;
-    proom           *prooms;
-} paths;
+    char                *name;
+    struct path_node    *next;
+} path_node;
 
+typedef struct          path
+{
+    int                 len;
+    path_node           *path;
+    struct path         *next;
+} path;
+
+typedef struct          elem
+{
+    room                *content;
+    struct elem         *next;
+} elem;
 
 /*
 *   parse.c
@@ -51,7 +58,7 @@ void parse_ants(graph *);
 void parse_rooms(graph *);
 void parse_links(graph *);
 void check_anthill(graph *);
-graph *parse_map();
+graph *parse_map(void);
 
 /*
 *   room_list.c
@@ -64,19 +71,26 @@ room *get_room(room *head, char *name);
 /*
 *   adjacent_list.c
 */
-adj *add_adj(adj **head, char *name);
+adj *add_adj(adj **head, room *ptr_adj);
 adj *get_nth_adj(adj *head, int n);
 adj *get_last_adj(adj *head);
 adj *get_adj(adj *head, char *name);
 
 /*
-*   error.c
+*   queue.c
 */
-void error(char *message);
+void push(elem **head, room* content);
+room *pop(elem **head);
 
 /*
 *   graph.c
 */
+path *search_paths(graph *);
 void print_graph(graph *);
+
+/*
+*   error.c
+*/
+void error(char *message);
 
 #endif

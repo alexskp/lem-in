@@ -52,6 +52,7 @@ void parse_links(graph *anthill)
     char *sep = "-\n";
     room *room_1;
     room *room_2;
+    room *ptr_adj;
 
     while (fgets(buff, BUFF_SIZE, stdin) != NULL)
     {
@@ -63,17 +64,17 @@ void parse_links(graph *anthill)
            && (room_2 = get_room(anthill->rooms, token_2)) != NULL
            && strcmp(token_1, token_2))
         {
-            if (!get_adj(room_1->adjacent, token_2))
-                add_adj(&room_1->adjacent, dup_str(token_2));
-            if (!get_adj(room_2->adjacent, token_1))
-                add_adj(&room_2->adjacent, dup_str(token_1));
+            ptr_adj = get_room(anthill->rooms, token_2);
+            add_adj(&room_1->adjacent, ptr_adj);
+            ptr_adj = get_room(anthill->rooms, token_1);
+            add_adj(&room_2->adjacent, ptr_adj);
+
             printf("%s-%s\n", token_1, token_2);
         }
-        else
-        {
+        else if (token_1)
             error("Error! Incorrect input...");
+        else
             return;
-        }
     }
 }
 

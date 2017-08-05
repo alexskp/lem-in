@@ -8,11 +8,12 @@ CFLAGS = -g -c -Wall -Wextra
 SRCDIR = src
 
 SRC = main.c \
-		parse.c \
+		parser.c \
 		adjacent_list.c \
 		room_list.c \
 		error.c \
-		graph.c
+		graph.c \
+		queue.c
 
 OBJ = $(addprefix $(SRCDIR)/, $(SRC:.c=.o))
 

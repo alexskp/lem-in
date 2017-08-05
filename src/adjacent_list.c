@@ -26,7 +26,7 @@ adj *get_adj(adj *head, char *name)
 {
     while (head)
     {
-        if (!strcmp(name, head->name))
+        if (!strcmp(name, head->ptr_adj->name))
             return head;
         else
             head = head->next;
@@ -35,13 +35,13 @@ adj *get_adj(adj *head, char *name)
 }
 
 /* return NULL if already exist */
-adj *add_adj(adj **head, char *name)
+adj *add_adj(adj **head, room *ptr_adj)
 {
-    if (!get_adj(*head, name))
+    if (!get_adj(*head, ptr_adj->name))
     {
         adj *last = get_last_adj(*head);
         adj *new = (adj *)malloc(sizeof(adj));
-        new->name = name;
+        new->ptr_adj = ptr_adj;
         new->next = NULL;
         if (last)
             last->next = new;

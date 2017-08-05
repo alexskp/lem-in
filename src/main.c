@@ -10,6 +10,7 @@ int main(void)
 
     print_graph(anthill);
 
+    search_paths(anthill);
 
 
     exit(EXIT_SUCCESS);
