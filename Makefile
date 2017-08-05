@@ -11,7 +11,8 @@ SRC = main.c \
 		parse.c \
 		adjacent_list.c \
 		room_list.c \
-		error.c
+		error.c \
+		graph.c
 
 OBJ = $(addprefix $(SRCDIR)/, $(SRC:.c=.o))
 

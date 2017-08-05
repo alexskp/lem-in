@@ -1,10 +1,11 @@
 
 #include "lem-in.h"
 
-#define BUFF_SIZE 100
-#define REGULAR_ROOM 0
-#define START_ROOM 1
-#define END_ROOM 2
+#define BUFF_SIZE       100
+#define REGULAR_ROOM    0
+#define START_ROOM      1
+#define END_ROOM        2
+#define INF             2147483647
 
 
 int iscomment(char *str)
@@ -24,13 +25,11 @@ void parse_ants(graph *anthill)
     char buff[BUFF_SIZE];
     while (fgets(buff, BUFF_SIZE, stdin) != NULL  && iscomment(buff));
 
-    if (!(ants = atoi(buff)))
-        error("Error! There are no ants...\n");
-    else
-    {
+    if ((ants = atoi(buff)) > 0)
         anthill->ants = ants;
-        printf("%d\n", ants);
-    }
+    else
+        error("Error! Incorrect number of ants...\n");
+    printf("%d\n", ants);
 }
 
 char *dup_str(char *str)
@@ -71,7 +70,10 @@ void parse_links(graph *anthill)
             printf("%s-%s\n", token_1, token_2);
         }
         else
+        {
+            error("Error! Incorrect input...");
             return;
+        }
     }
 }
 
@@ -102,7 +104,7 @@ void parse_rooms(graph *anthill)
             if (!get_room(*rooms, token_name))
             {
                 room_name = dup_str(token_name);
-                new_room = add_room(rooms, room_name, atoi(token_x), atoi(token_y), NULL);
+                new_room = add_room(rooms, room_name, atoi(token_x), atoi(token_y), INF);
             }
             else
                 error("Error! Room already exist!");
@@ -110,6 +112,7 @@ void parse_rooms(graph *anthill)
             if (room_type == START_ROOM)
             {
                 anthill->start_room = new_room;
+                new_room->dist = 0;
                 room_type = REGULAR_ROOM;
             }
             else if (room_type == END_ROOM)
@@ -154,7 +157,7 @@ void check_anthill(graph *anthill)
         error("Error! No end room!");
 }
 
-graph *parse(void)
+graph *parse_map(void)
 {
     graph *anthill = (graph *)malloc(sizeof(graph));
 

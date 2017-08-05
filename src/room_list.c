@@ -35,7 +35,7 @@ room *get_room(room *head, char *name)
 }
 
 /* return NULL if already exist */
-room *add_room(room **head, char *name, int x, int y, adj *adjacent)
+room *add_room(room **head, char *name, int x, int y, int dist)
 {
     if (!get_room(*head, name))
     {
@@ -44,7 +44,8 @@ room *add_room(room **head, char *name, int x, int y, adj *adjacent)
         new->name = name;
         new->x = x;
         new->y = y;
-        new->adjacent = adjacent;
+        new->dist = dist;
+        new->adjacent = NULL;
         new->next = NULL;
         if (last)
             last->next = new;
