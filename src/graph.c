@@ -1,6 +1,8 @@
 
 #include "lem-in.h"
 
+
+
 path *search_paths(graph *anthill)
 {
     elem *queue = NULL;
@@ -16,7 +18,8 @@ path *search_paths(graph *anthill)
         i = 0;
         while (adj_room = get_nth_adj(current->adjacent, i))
         {
-            if (adj_room->ptr_adj->dist > current->dist + 1)
+            if (adj_room->ptr_adj->dist != -1 &&
+                adj_room->ptr_adj->dist > current->dist + 1)
             {
                 adj_room->ptr_adj->dist = current->dist + 1;
                 push(&queue, adj_room->ptr_adj);
@@ -25,8 +28,9 @@ path *search_paths(graph *anthill)
         }
     }
 
-
     printf("LENGTH OF THE SHORTEST WAY: %d\n", anthill->end_room->dist);
+
+    //create_path()
 
     return NULL;
 }
@@ -52,4 +56,10 @@ void print_graph(graph *anthill)
         }
         j = 0;
     }
+}
+
+void free_graph(graph *anthill)
+{
+    free_rooms(&anthill->rooms);
+    my_free(anthill);
 }

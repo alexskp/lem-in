@@ -7,6 +7,7 @@
 #include <ctype.h>
 #include <string.h>
 
+
 typedef struct          adjacent
 {
     struct room         *ptr_adj;
@@ -61,20 +62,21 @@ void check_anthill(graph *);
 graph *parse_map(void);
 
 /*
-*   room_list.c
-*/
-room *add_room(room **head, char *name, int x, int y, int dist);
-room *get_nth_room(room *head, int n);
-room *get_last_room(room *head);
-room *get_room(room *head, char *name);
-
-/*
 *   adjacent_list.c
 */
 adj *add_adj(adj **head, room *ptr_adj);
 adj *get_nth_adj(adj *head, int n);
 adj *get_last_adj(adj *head);
 adj *get_adj(adj *head, char *name);
+void free_adjacent(adj **head);
+/*
+*   room_list.c
+*/
+room *add_room(room **head, char *name, int x, int y, int dist);
+room *get_nth_room(room *head, int n);
+room *get_last_room(room *head);
+room *get_room(room *head, char *name);
+void free_rooms(room **head);
 
 /*
 *   queue.c
@@ -87,6 +89,14 @@ room *pop(elem **head);
 */
 path *search_paths(graph *);
 void print_graph(graph *);
+void free_graph(graph *);
+
+/*
+*   leak_control.c
+*/
+extern int malloc_counter;
+void *my_maloc(size_t size);
+void my_free(void *ptr);
 
 /*
 *   error.c

@@ -40,7 +40,7 @@ room *add_room(room **head, char *name, int x, int y, int dist)
     if (!get_room(*head, name))
     {
         room *last = get_last_room(*head);
-        room *new = (room *)malloc(sizeof(room));
+        room *new = (room *)my_malloc(sizeof(room));
         new->name = name;
         new->x = x;
         new->y = y;
@@ -55,4 +55,19 @@ room *add_room(room **head, char *name, int x, int y, int dist)
     }
     else
         return NULL;
+}
+
+void free_rooms(room **head)
+{
+    room *del;
+    if (*head == NULL)
+        return;
+    while (*head)
+    {
+        free_adjacent(&(*head)->adjacent);
+        my_free((*head)->name);
+        del = (*head);
+        (*head) = (*head)->next;
+        my_free(del);
+    }
 }

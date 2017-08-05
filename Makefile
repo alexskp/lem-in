@@ -13,7 +13,8 @@ SRC = main.c \
 		room_list.c \
 		error.c \
 		graph.c \
-		queue.c
+		queue.c \
+		leak_control.c
 
 OBJ = $(addprefix $(SRCDIR)/, $(SRC:.c=.o))
 

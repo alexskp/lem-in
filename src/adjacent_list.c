@@ -40,15 +40,28 @@ adj *add_adj(adj **head, room *ptr_adj)
     if (!get_adj(*head, ptr_adj->name))
     {
         adj *last = get_last_adj(*head);
-        adj *new = (adj *)malloc(sizeof(adj));
+        adj *new = (adj *)my_malloc(sizeof(adj));
         new->ptr_adj = ptr_adj;
         new->next = NULL;
         if (last)
             last->next = new;
         else
-            *head = new;
+            (*head) = new;
         return new;
     }
     else
         return NULL;
+}
+
+void free_adjacent(adj **head)
+{
+    adj *del;
+    if (*head == NULL)
+        return;
+    while (*head)
+    {
+        del = (*head);
+        (*head) = del->next;
+        my_free(del);
+    }
 }

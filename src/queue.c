@@ -13,7 +13,7 @@ elem *get_last_elem(elem *head)
 void push(elem **head, room* content)
 {
     elem *last = get_last_elem(*head);
-    elem *new = (elem *)malloc(sizeof(elem));
+    elem *new = (elem *)my_malloc(sizeof(elem));
     new->content = content;
     new->next = NULL;
     if (last)
@@ -29,6 +29,6 @@ room *pop(elem **head)
     elem *pop_elem = (*head);
     room *content = pop_elem->content;
     (*head) = pop_elem->next;
-    free(pop_elem);
+    my_free(pop_elem);
     return content;
 }
