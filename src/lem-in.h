@@ -7,10 +7,11 @@
 #include <ctype.h>
 #include <string.h>
 
+#define INF             2147483647      /* max_int */
 
 typedef struct          adjacent
 {
-    struct room         *ptr_adj;
+    struct room         *adj_room;
     struct adjacent     *next;
 } adj;
 
@@ -32,25 +33,18 @@ typedef struct          graph
     room                *rooms;
 } graph;
 
-
-typedef struct          path_node
-{
-    char                *name;
-    struct path_node    *next;
-} path_node;
-
-typedef struct          path
-{
-    int                 len;
-    path_node           *path;
-    struct path         *next;
-} path;
-
 typedef struct          elem
 {
     room                *content;
     struct elem         *next;
 } elem;
+
+typedef struct          path
+{
+    int                 len;
+    adj                 *path_node;
+    struct path         *next;
+} path;
 
 /*
 *   parse.c
@@ -79,6 +73,15 @@ room *get_room(room *head, char *name);
 void free_rooms(room **head);
 
 /*
+*   path_list.c
+*/
+path *add_path(path **head, adj *path_node);
+path *get_nth_path(path *head, int n);
+path *get_shortest_path(path *head);
+path *get_last_path(path *head);
+void free_paths(path **head);
+
+/*
 *   queue.c
 */
 void push(elem **head, room* content);
@@ -87,8 +90,12 @@ room *pop(elem **head);
 /*
 *   graph.c
 */
-path *search_paths(graph *);
+void search_path(graph *);
+adj *get_path(graph *);
+path *create_paths(graph *);
+void reset_dists(graph *);
 void print_graph(graph *);
+void print_paths(path *);
 void free_graph(graph *);
 
 /*

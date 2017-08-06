@@ -7,14 +7,15 @@ CFLAGS = -g -c -Wall -Wextra
 
 SRCDIR = src
 
-SRC = main.c \
+SRC = 	main.c \
 		parser.c \
 		adjacent_list.c \
 		room_list.c \
 		error.c \
 		graph.c \
 		queue.c \
-		leak_control.c
+		leak_control.c \
+		path_list.c
 
 OBJ = $(addprefix $(SRCDIR)/, $(SRC:.c=.o))
 
@@ -35,4 +36,4 @@ fclean:
 	rm -f $(OBJ)
 	rm -f $(EXECUTABLE)
 
-re: fclean all clean
+re: fclean all

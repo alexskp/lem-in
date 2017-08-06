@@ -5,10 +5,8 @@
 #define REGULAR_ROOM    0
 #define START_ROOM      1
 #define END_ROOM        2
-#define INF             2147483647
 
-
-int iscomment(char *str)
+static int iscomment(char *str)
 {
     if (str[0] == '#' && str[1]!= '#')
     {
@@ -32,7 +30,7 @@ void parse_ants(graph *anthill)
     printf("%d\n", ants);
 }
 
-char *dup_str(char *str)
+static char *dup_str(char *str)
 {
     char *new;
     if (new = (char *)my_malloc(sizeof(char) * strlen(str) + 1))
