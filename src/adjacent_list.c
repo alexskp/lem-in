@@ -22,11 +22,11 @@ adj *get_last_adj(adj *head)
     return head;
 }
 
-adj *get_adj(adj *head, char *name)
+adj *get_adj(adj *head, room *adj_room)
 {
     while (head)
     {
-        if (!strcmp(name, head->adj_room->name))
+        if (adj_room == head->adj_room)
             return head;
         else
             head = head->next;
@@ -36,14 +36,23 @@ adj *get_adj(adj *head, char *name)
 
 void del_adj(adj **head, adj *del)
 {
-    adj *elem;
+    adj *tmp;
     int i = 0;
-    while (elem = get_nth_adj((*head), i++))
+    if ((*head) == del)
     {
-        if (elem->next == del)
+        tmp = (*head)->next;
+        free(del);
+        (*head) = tmp;
+    }
+    else
+    {
+        while ((tmp = get_nth_adj((*head), i++)))
         {
-            elem->next = del->next;
-            my_free(del);
+            if (tmp->next == del)
+            {
+                tmp->next = del->next;
+                free(del);
+            }
         }
     }
 }
@@ -51,10 +60,10 @@ void del_adj(adj **head, adj *del)
 /* return NULL if already exist */
 adj *add_adj(adj **head, room *adj_room)
 {
-    if (!get_adj(*head, adj_room->name))
+    if (!get_adj(*head, adj_room))
     {
         adj *last = get_last_adj(*head);
-        adj *new = (adj *)my_malloc(sizeof(adj));
+        adj *new = (adj *)malloc(sizeof(adj));
         new->adj_room = adj_room;
         new->next = NULL;
         if (last)
@@ -76,6 +85,6 @@ void free_adjacent(adj **head)
     {
         del = (*head);
         (*head) = del->next;
-        my_free(del);
+        free(del);
     }
 }

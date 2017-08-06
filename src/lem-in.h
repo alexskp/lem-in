@@ -47,7 +47,7 @@ typedef struct          path
 } path;
 
 /*
-*   parse.c
+*   parser.c
 */
 void parse_ants(graph *);
 void parse_rooms(graph *);
@@ -61,7 +61,7 @@ graph *parse_map(void);
 adj *add_adj(adj **head, room *ptr_adj);
 adj *get_nth_adj(adj *head, int n);
 adj *get_last_adj(adj *head);
-adj *get_adj(adj *head, char *name);
+adj *get_adj(adj *head, room *adj_room);
 void del_adj(adj **head, adj *del);
 void free_adjacent(adj **head);
 /*
@@ -93,6 +93,7 @@ room *pop(elem **head);
 */
 void search_path(graph *);
 adj *get_path(graph *);
+void unlink(room *, room *);
 path *create_paths(graph *);
 void reset_dists(graph *);
 void print_graph(graph *);

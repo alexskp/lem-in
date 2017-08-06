@@ -3,7 +3,7 @@ EXECUTABLE = lem-in
 
 CC = gcc
 
-CFLAGS = -g -c -Wall -Wextra
+CFLAGS = -g -c -Wall -Wextra -Werror
 
 SRCDIR = src
 

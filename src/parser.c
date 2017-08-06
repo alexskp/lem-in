@@ -33,7 +33,7 @@ void parse_ants(graph *anthill)
 static char *dup_str(char *str)
 {
     char *new;
-    if (new = (char *)my_malloc(sizeof(char) * strlen(str) + 1))
+    if ((new = (char *)malloc(sizeof(char) * strlen(str) + 1)))
     {
         strcpy(new, str);
         return new;
@@ -158,7 +158,7 @@ void check_anthill(graph *anthill)
 
 graph *parse_map(void)
 {
-    graph *anthill = (graph *)my_malloc(sizeof(graph));
+    graph *anthill = (graph *)malloc(sizeof(graph));
 
     parse_ants(anthill);
     parse_rooms(anthill);
