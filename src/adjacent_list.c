@@ -34,6 +34,20 @@ adj *get_adj(adj *head, char *name)
     return NULL;
 }
 
+void del_adj(adj **head, adj *del)
+{
+    adj *elem;
+    int i = 0;
+    while (elem = get_nth_adj((*head), i++))
+    {
+        if (elem->next == del)
+        {
+            elem->next = del->next;
+            my_free(del);
+        }
+    }
+}
+
 /* return NULL if already exist */
 adj *add_adj(adj **head, room *adj_room)
 {

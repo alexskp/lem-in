@@ -9,6 +9,7 @@ int main(void)
     path *paths = create_paths(anthill);
 
 
+    
     print_paths(paths);
 
     free_graph(anthill);

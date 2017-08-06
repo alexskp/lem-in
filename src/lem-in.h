@@ -62,6 +62,7 @@ adj *add_adj(adj **head, room *ptr_adj);
 adj *get_nth_adj(adj *head, int n);
 adj *get_last_adj(adj *head);
 adj *get_adj(adj *head, char *name);
+void del_adj(adj **head, adj *del);
 void free_adjacent(adj **head);
 /*
 *   room_list.c
@@ -75,7 +76,7 @@ void free_rooms(room **head);
 /*
 *   path_list.c
 */
-path *add_path(path **head, adj *path_node);
+path *add_path(path **head, adj *path_node, int len);
 path *get_nth_path(path *head, int n);
 path *get_shortest_path(path *head);
 path *get_last_path(path *head);

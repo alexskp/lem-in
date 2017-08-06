@@ -33,12 +33,12 @@ path *get_shortest_path(path *head)
     return  min;
 }
 
-path *add_path(path **head, adj *path_node)
+path *add_path(path **head, adj *path_node, int len)
 {
     path *last = get_last_path(*head);
     path *new = (path *)my_malloc(sizeof(path));
     new->path_node = path_node;
-    new->len = 0;
+    new->len = len;
     new->next = NULL;
     if (last)
         last->next = new;

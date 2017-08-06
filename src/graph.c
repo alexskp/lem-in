@@ -26,38 +26,55 @@ void search_path(graph *anthill)
             i++;
         }
     }
+    print_graph(anthill);
 }
 
 adj *get_path(graph *anthill)
 {
-    int j;
+    int i;
     room *nth_room = anthill->end_room;
     adj *path_node = NULL;
     adj *adjacent;
 
     search_path(anthill);
+
     if (nth_room->dist == INF)
         return NULL;
 
+    i = 0;
+    while (adjacent = get_nth_adj(nth_room->adjacent, i++))
+    {
+        if (adjacent->adj_room == anthill->start_room)
+        {
+            add_adj(&path_node, anthill->end_room);
+            add_adj(&path_node, anthill->start_room);
+            del_adj(&nth_room->adjacent, adjacent);
+            i = 0;
+            while (adjacent = get_nth_adj(anthill->start_room->adjacent, i++))
+            {
+                if (adjacent->adj_room == anthill->end_room)
+                    del_adj(&anthill->start_room->adjacent, adjacent);
+            }
+            return path_node;
+        }
+    }
+
     while (nth_room->dist != 0)
     {
-        j = 0;
-        while (adjacent = get_nth_adj(nth_room->adjacent, j++))
+        i = 0;
+        while (adjacent = get_nth_adj(nth_room->adjacent, i++))
         {
             if ((nth_room->dist - 1) == adjacent->adj_room->dist)
             {
                 add_adj(&path_node, nth_room);
                 if (nth_room != anthill->start_room && nth_room != anthill->end_room)
-                {
                     nth_room->dist = -1;
-                }
                 nth_room = adjacent->adj_room;
                 break;
             }
         }
     }
     add_adj(&path_node, anthill->start_room);
-
     return path_node;
 }
 
@@ -65,10 +82,20 @@ path *create_paths(graph *anthill)
 {
     path *paths = NULL;
     adj *path_node;
+    adj *checker;
+    int len;
 
     while (path_node = get_path(anthill))
     {
-        add_path(&paths, path_node);
+        len = 0;
+        checker = path_node;
+        while (checker->next)
+        {
+            checker = checker->next;
+            len++;
+        }
+
+        add_path(&paths, path_node, len);
         reset_dists(anthill);
     }
     return paths;
@@ -80,8 +107,11 @@ void reset_dists(graph *anthill)
     int i = 0;
 
     while (nth_room = get_nth_room(anthill->rooms, i++))
+    {
         if (nth_room->dist != -1)
             nth_room->dist = INF;
+
+    }
     anthill->start_room->dist = 0;
 }
 
@@ -117,13 +147,11 @@ void print_graph(graph *anthill)
     printf(":::::::END_ROOM:::::::: %s\n\n", anthill->end_room->name);
     while (nth_room = get_nth_room(anthill->rooms, i++))
     {
+        j = 0;
         printf("ROOM: %s(%d, %d)\tadjacent:\t min distance from start room: %d\n",
                nth_room->name, nth_room->x, nth_room->y, nth_room->dist);
         while (adjacent = get_nth_adj(nth_room->adjacent, j++))
-        {
             printf("_________________: %s\n", adjacent->adj_room->name);
-        }
-        j = 0;
     }
 }
 
