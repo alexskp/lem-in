@@ -140,7 +140,7 @@ void parse_rooms(graph *anthill)
         else
         {
             ungetc('\n', stdin);
-            for (int i = strlen(buff); i >= 0; i--)
+            for (int i = strlen(buff) - 1; i >= 0; i--)
                 ungetc(buff[i], stdin);
             return;
         }
@@ -156,9 +156,18 @@ void check_anthill(graph *anthill)
         error("Error! No end room!");
 }
 
-graph *parse_map(void)
+graph *create_graph(void)
 {
     graph *anthill = (graph *)malloc(sizeof(graph));
+    anthill->start_room = NULL;
+    anthill->end_room = NULL;
+    anthill->rooms = NULL;
+    return anthill;
+}
+
+graph *parse_map(void)
+{
+    graph *anthill = create_graph();
 
     parse_ants(anthill);
     parse_rooms(anthill);

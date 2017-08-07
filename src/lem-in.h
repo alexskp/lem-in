@@ -64,6 +64,7 @@ adj *get_last_adj(adj *head);
 adj *get_adj(adj *head, room *adj_room);
 void del_adj(adj **head, adj *del);
 void free_adjacent(adj **head);
+
 /*
 *   room_list.c
 */

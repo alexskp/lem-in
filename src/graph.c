@@ -94,11 +94,8 @@ path *create_paths(graph *anthill)
 
 void unlink(room *room_1, room *room_2)
 {
-    adj *adj_room_1;
-    adj *adj_room_2;
-
-    adj_room_2 = get_adj(room_1->adjacent, room_2);
-    adj_room_1 = get_adj(room_2->adjacent, room_1);
+    adj *adj_room_1 = get_adj(room_2->adjacent, room_1);;
+    adj *adj_room_2 = get_adj(room_1->adjacent, room_2);
 
     del_adj(&room_1->adjacent, adj_room_2);
     del_adj(&room_2->adjacent, adj_room_1);
