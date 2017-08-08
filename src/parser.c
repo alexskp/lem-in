@@ -17,6 +17,18 @@ static int iscomment(char *str)
         return 0;
 }
 
+static char *dup_str(char *str)
+{
+    char *new;
+    if ((new = (char *)malloc(sizeof(char) * strlen(str) + 1)))
+    {
+        strcpy(new, str);
+        return new;
+    }
+    else
+        return NULL;
+}
+
 void parse_ants(graph *anthill)
 {
     int ants;
@@ -30,18 +42,6 @@ void parse_ants(graph *anthill)
     printf("%d\n", ants);
 }
 
-static char *dup_str(char *str)
-{
-    char *new;
-    if ((new = (char *)malloc(sizeof(char) * strlen(str) + 1)))
-    {
-        strcpy(new, str);
-        return new;
-    }
-    else
-        return NULL;
-}
-
 void parse_links(graph *anthill)
 {
     char buff[BUFF_SIZE];
@@ -50,11 +50,10 @@ void parse_links(graph *anthill)
     char *sep = "-\n";
     room *room_1;
     room *room_2;
-    room *ptr_adj;
 
     while (fgets(buff, BUFF_SIZE, stdin) != NULL)
     {
-        if (iscomment(buff))
+        if (iscomment(buff) || !strcmp(buff, "\n"))
             continue;
         if ((token_1 = strtok(buff, sep)) != NULL
            && (token_2 = strtok(NULL, sep)) != NULL
@@ -62,17 +61,16 @@ void parse_links(graph *anthill)
            && (room_2 = get_room(anthill->rooms, token_2)) != NULL
            && strcmp(token_1, token_2))
         {
-            ptr_adj = get_room(anthill->rooms, token_2);
-            add_adj(&room_1->adjacent, ptr_adj);
-            ptr_adj = get_room(anthill->rooms, token_1);
-            add_adj(&room_2->adjacent, ptr_adj);
-
+            link(room_1, room_2);
             printf("%s-%s\n", token_1, token_2);
         }
         else if (token_1)
             error("Error! Incorrect input...");
         else
+        {
+            error("Error! Imposible to identify input...");
             return;
+        }
     }
 }
 
@@ -94,7 +92,7 @@ void parse_rooms(graph *anthill)
 
     while (fgets(buff, BUFF_SIZE, stdin) != NULL)
     {
-        if (iscomment(buff))
+        if (iscomment(buff) || !strcmp(buff, "\n"))
             continue;
         if ((token_name = strtok(buff, sep)) != NULL
            && (token_x = strtok(NULL, sep)) != NULL
@@ -139,6 +137,9 @@ void parse_rooms(graph *anthill)
         }
         else
         {
+            /* if can't identify line than return back
+            /  to the stdin stream for the link parser
+            */
             ungetc('\n', stdin);
             for (int i = strlen(buff) - 1; i >= 0; i--)
                 ungetc(buff[i], stdin);

@@ -1,5 +1,5 @@
 
-EXECUTABLE = lem-in
+EXEC = lem-in
 
 CC = gcc
 
@@ -7,33 +7,31 @@ CFLAGS = -g -c -Wall -Wextra -Werror
 
 SRCDIR = src
 
-SRC = 	main.c \
-		parser.c \
-		adjacent_list.c \
-		room_list.c \
-		error.c \
-		graph.c \
-		queue.c \
-		leak_control.c \
-		path_list.c
+BUILDDIR = obj
 
-OBJ = $(addprefix $(SRCDIR)/, $(SRC:.c=.o))
+SRC := $(wildcard $(SRCDIR)/*.c)
+OBJ := $(patsubst $(SRCDIR)/%, %, $(SRC))
+OBJ := $(patsubst %.c, %.o, $(OBJ))
+OBJ := $(addprefix $(BUILDDIR)/,$(OBJ))
 
-all: $(EXECUTABLE)
+.PHONY: all
+all: $(EXEC)
 
-$(EXECUTABLE): $(OBJ)
-	$(CC) -o $(EXECUTABLE) $(OBJ)
+$(EXEC): $(OBJ)
+	$(CC) -o $(EXEC) $(OBJ)
 
-%.o: %.c
+$(BUILDDIR)/%.o: $(SRCDIR)/%.c
 	$(CC) $(CFLAGS) -o $@ $<
 
 
-.PHONY: clean fclean re
+.PHONY: clean
 clean:
 	rm -f $(OBJ)
 
+.PHONY: fclean
 fclean:
 	rm -f $(OBJ)
-	rm -f $(EXECUTABLE)
+	rm -f $(EXEC)
 
+.PHONY: re
 re: fclean all

@@ -43,9 +43,8 @@ adj *get_path(graph *anthill)
     if (get_adj(anthill->start_room->adjacent, anthill->end_room))
     {
         unlink(anthill->start_room, anthill->end_room);
-        add_adj(&path_node, anthill->start_room);
         add_adj(&path_node, anthill->end_room);
-        search_path(anthill);
+        add_adj(&path_node, anthill->start_room);
         return path_node;
     }
 
@@ -92,68 +91,68 @@ path *create_paths(graph *anthill)
     return paths;
 }
 
-void unlink(room *room_1, room *room_2)
+// path *get_paths(graph *anthill)
+// {
+//     path *paths = create_paths(anthill);
+//     paths = check_alternative(anthill, paths);
+//     return paths;
+// }
+
+void search_alternative(graph *anthill, path *paths)
 {
-    adj *adj_room_1 = get_adj(room_2->adjacent, room_1);;
-    adj *adj_room_2 = get_adj(room_1->adjacent, room_2);
+    print_paths(paths);
+    printf("\nAlternative cases: \n");
 
-    del_adj(&room_1->adjacent, adj_room_2);
-    del_adj(&room_2->adjacent, adj_room_1);
-}
-
-void reset_dists(graph *anthill)
-{
-    room *nth_room;
-    int i = 0;
-
-    while ((nth_room = get_nth_room(anthill->rooms, i++)))
-        if (nth_room->dist != -1)
-            nth_room->dist = INF;
-    anthill->start_room->dist = 0;
-}
-
-void print_paths(path *paths)
-{
     path *nth_path;
     adj *nth_node;
+    path *alt_paths = NULL;
+
+    int spec_case = 0;
+    adj *spec_path = NULL;
+    room *room_1 = NULL;
+    room *room_2 = NULL;
 
     int i = 0;
     int j = 0;
 
     while ((nth_path = get_nth_path(paths, i++)))
     {
-        printf("LENGTH: %d\t", nth_path->len);
-        while ((nth_node = get_nth_adj(nth_path->path_node, j++)))
+        if (nth_path->len == 1)
         {
-            printf("%s - ", nth_node->adj_room->name);
+            spec_case = 1;
+            room_1 = nth_path->path_node->adj_room;
+            room_2 = nth_path->path_node->next->adj_room;
+            break;
         }
-        printf("\n");
-        j = 0;
     }
-}
 
-void print_graph(graph *anthill)
-{
-    room *nth_room;
-    adj *adjacent;
+    i = 0;
 
-    int i = 0;
-    int j = 0;
-
-    printf("\n::::::START_ROOM::::::: %s\n", anthill->start_room->name);
-    printf(":::::::END_ROOM:::::::: %s\n\n", anthill->end_room->name);
-    while ((nth_room = get_nth_room(anthill->rooms, i++)))
+    while ((nth_path = get_nth_path(paths, i++)))
     {
         j = 0;
-        printf("ROOM: %s(%d, %d)\t min distance from start room: %d\n",
-               nth_room->name, nth_room->x, nth_room->y, nth_room->dist);
-        while ((adjacent = get_nth_adj(nth_room->adjacent, j++)))
-            printf("_____: %s\n", adjacent->adj_room->name);
+        if (nth_path->len > 1)
+        {
+            while ((nth_node = get_nth_adj(nth_path->path_node, j++)))
+            {
+                if (nth_node->next)
+                {
+                    unlink(nth_node->adj_room, nth_node->next->adj_room);
+                    hard_reset_dists(anthill);
+                    alt_paths = create_paths(anthill);
+                    if (spec_case)
+                    {
+                        spec_path = NULL;
+                        add_adj(&spec_path, room_1);
+                        add_adj(&spec_path, room_2);
+                        add_path(&alt_paths, spec_path, 1);
+                    }
+                    print_paths(alt_paths);
+                    printf("\n");
+                    free_paths(&alt_paths);
+                    link(nth_node->adj_room, nth_node->next->adj_room);
+                }
+            }
+        }
     }
-}
-
-void free_graph(graph *anthill)
-{
-    free_rooms(&anthill->rooms);
-    free(anthill);
 }

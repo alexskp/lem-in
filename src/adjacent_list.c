@@ -4,6 +4,8 @@
 
 adj *get_nth_adj(adj *head, int n)
 {
+    if (n < 0)
+        return NULL;
     int counter = 0;
     while (counter < n && head)
     {
@@ -74,17 +76,4 @@ adj *add_adj(adj **head, room *adj_room)
     }
     else
         return NULL;
-}
-
-void free_adjacent(adj **head)
-{
-    adj *del;
-    if (*head == NULL)
-        return;
-    while (*head)
-    {
-        del = (*head);
-        (*head) = del->next;
-        free(del);
-    }
 }

@@ -46,17 +46,3 @@ path *add_path(path **head, adj *path_node, int len)
         (*head) = new;
     return new;
 }
-
-void free_paths(path **head)
-{
-    path *del;
-    if (*head == NULL)
-        return;
-    while (*head)
-    {
-        free_adjacent(&(*head)->path_node);
-        del = (*head);
-        (*head) = (*head)->next;
-        free(del);
-    }
-}
