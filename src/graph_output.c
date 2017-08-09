@@ -24,6 +24,7 @@ void print_paths(path *paths)
             printf("%s%s", nth_node->adj_room->name, (j >= 0) ? " - " : "\n");
         }
     }
+    printf("Steps: %d\n", max_steps(paths));
 }
 
 void print_graph(graph *anthill)

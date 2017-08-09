@@ -93,9 +93,10 @@ room *pop(elem **head);
 void search_path(graph *);
 adj *get_path(graph *);
 path *get_paths(graph *);
-path *search_alternative(graph *, path *);
+path *search_optimal_paths(graph *);
 path *create_paths(graph *);
-int apportion_ants(path *, int ants);
+void apportion_ants(path *, int ants);
+int max_steps(path *);
 
 /*
 *   graph_tools.c

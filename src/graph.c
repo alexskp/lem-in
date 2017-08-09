@@ -93,19 +93,16 @@ path *create_paths(graph *anthill)
 
 path *get_paths(graph *anthill)
 {
-    path *alt_paths;
-    path *paths = create_paths(anthill);
-    if ((alt_paths = search_alternative(anthill, paths)))
-    {
-        free_paths(&paths);
-        return alt_paths;
-    }
+    path *paths = search_optimal_paths(anthill);
+
     return paths;
 }
 
-path *search_alternative(graph *anthill, path *paths)
+path *search_optimal_paths(graph *anthill)
 {
-    int original = apportion_ants(paths, anthill->ants);
+    path *paths = create_paths(anthill);
+    apportion_ants(paths, anthill->ants);
+    int original = max_steps(paths);
 
     path *nth_path;
     adj *nth_node;
@@ -159,7 +156,8 @@ path *search_alternative(graph *anthill, path *paths)
                         continue;
                     }
 
-                    if (apportion_ants(alt_paths, anthill->ants) < original)
+                    apportion_ants(alt_paths, anthill->ants);
+                    if (max_steps(alt_paths) < original)
                     {
                         tmp1 = nth_node->adj_room;
                         tmp2 = nth_node->next->adj_room;
@@ -173,13 +171,15 @@ path *search_alternative(graph *anthill, path *paths)
     if (tmp1)
     {
         unlink(tmp1, tmp2);
+        hard_reset_dists(anthill);
+        alt_paths = create_paths(anthill);
         return alt_paths;
     }
     else
-        return NULL;
+        return paths;
 }
 
-int apportion_ants(path *paths, int ants)
+void apportion_ants(path *paths, int ants)
 {
     int i = 0;
     int max_len = 0;
@@ -206,8 +206,7 @@ int apportion_ants(path *paths, int ants)
 
     if (num_of_paths == 1)
     {
-        steps = ants + paths->len - 1;
-        return steps;
+        paths->ants = ants;
     }
 
     if (max_len == min_len)
@@ -244,9 +243,15 @@ int apportion_ants(path *paths, int ants)
         nth_path->ants++;
         rest--;
     }
+}
 
+int max_steps(path *paths)
+{
+    path *nth_path;
+    int i = 0;
+    int steps;
     int max_steps = 0;
-    i = 0;
+
     while ((nth_path = get_nth_path(paths, i++)))
     {
         steps = nth_path->ants + nth_path->len - 1;
