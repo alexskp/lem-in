@@ -91,17 +91,18 @@ path *create_paths(graph *anthill)
     return paths;
 }
 
-// path *get_paths(graph *anthill)
-// {
-//     path *paths = create_paths(anthill);
-//     paths = check_alternative(anthill, paths);
-//     return paths;
-// }
+path *get_paths(graph *anthill)
+{
+    path *paths = create_paths(anthill);
+    search_alternative(anthill, paths);
+    hard_reset_dists(anthill);
+    paths = create_paths(anthill);
+    return paths;
+}
 
 void search_alternative(graph *anthill, path *paths)
 {
-    print_paths(paths);
-    printf("\nAlternative cases: \n");
+    int original = apportion_ants(paths, anthill->ants);
 
     path *nth_path;
     adj *nth_node;
@@ -111,6 +112,9 @@ void search_alternative(graph *anthill, path *paths)
     adj *spec_path = NULL;
     room *room_1 = NULL;
     room *room_2 = NULL;
+
+    room *tmp1 = NULL;
+    room *tmp2 = NULL;
 
     int i = 0;
     int j = 0;
@@ -127,7 +131,6 @@ void search_alternative(graph *anthill, path *paths)
     }
 
     i = 0;
-
     while ((nth_path = get_nth_path(paths, i++)))
     {
         j = 0;
@@ -147,12 +150,100 @@ void search_alternative(graph *anthill, path *paths)
                         add_adj(&spec_path, room_2);
                         add_path(&alt_paths, spec_path, 1);
                     }
-                    print_paths(alt_paths);
-                    printf("\n");
+                    if (!alt_paths)
+                    {
+                        link(nth_node->adj_room, nth_node->next->adj_room);
+                        continue;
+                    }
+
+                    if (apportion_ants(alt_paths, anthill->ants) < original)
+                    {
+                        tmp1 = nth_node->adj_room;
+                        tmp2 = nth_node->next->adj_room;
+                    }
                     free_paths(&alt_paths);
                     link(nth_node->adj_room, nth_node->next->adj_room);
                 }
             }
         }
     }
+    if (tmp1)
+        unlink(tmp1, tmp2);
+}
+
+int apportion_ants(path *paths, int ants)
+{
+    int i = 0;
+    int max_len = 0;
+    int min_len = INF;
+    int len_diff;
+    int num_of_paths = 0;
+    int steps;
+    int ants_per_path;
+    int ditributed_ants = 0;
+    int part;
+    int rest;
+    int min_steps = INF;
+    int min_steps_path;
+    path *nth_path;
+
+    while ((nth_path = get_nth_path(paths, i++)))
+    {
+        if (nth_path->len > max_len)
+            max_len = nth_path->len;
+        if (nth_path->len < min_len)
+            min_len = nth_path->len;
+        num_of_paths++;
+    }
+
+    if (num_of_paths == 1)
+    {
+        steps = ants + paths->len - 1;
+        return steps;
+    }
+
+    if (max_len == min_len)
+        len_diff = 1;
+    else
+        len_diff = max_len - min_len;
+
+    part = ants / num_of_paths;
+    i = 0;
+    while ((nth_path = get_nth_path(paths, i++)))
+    {
+        ants_per_path = part + (max_len + 1 - nth_path->len - len_diff);
+        if (nth_path->len == 1)
+            ants_per_path--;
+        nth_path->ants = ants_per_path;
+        ditributed_ants += ants_per_path;
+    }
+
+    rest = ants - ditributed_ants;
+    while (rest)
+    {
+        i = 0;
+        while ((nth_path = get_nth_path(paths, i++)))
+        {
+            steps = nth_path->len + nth_path->ants - 1;
+            if (steps < min_steps)
+            {
+                min_steps_path = i - 1;
+                min_steps = steps;
+            }
+        }
+        min_steps = INF;
+        nth_path = get_nth_path(paths, min_steps_path);
+        nth_path->ants++;
+        rest--;
+    }
+
+    int max_steps = 0;
+    i = 0;
+    while ((nth_path = get_nth_path(paths, i++)))
+    {
+        steps = nth_path->ants + nth_path->len - 1;
+        if (steps > max_steps)
+            max_steps = steps;
+    }
+    return steps;
 }

@@ -39,6 +39,7 @@ path *add_path(path **head, adj *path_node, int len)
     path *new = (path *)malloc(sizeof(path));
     new->path_node = path_node;
     new->len = len;
+    new->ants = 0;
     new->next = NULL;
     if (last)
         last->next = new;
