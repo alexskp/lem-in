@@ -18,7 +18,7 @@ void print_paths(path *paths)
     while ((nth_path = get_nth_path(paths, i++)))
     {
         j = nth_path->len;
-        printf("LENGTH: %d\t", nth_path->len);
+        printf("LENGTH: %d ANTS: %d\t", nth_path->len, nth_path->ants);
         while ((nth_node = get_nth_adj(nth_path->path_node, j--)))
         {
             printf("%s%s", nth_node->adj_room->name, (j >= 0) ? " - " : "\n");

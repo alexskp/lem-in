@@ -93,7 +93,7 @@ room *pop(elem **head);
 void search_path(graph *);
 adj *get_path(graph *);
 path *get_paths(graph *);
-void search_alternative(graph *, path *);
+path *search_alternative(graph *, path *);
 path *create_paths(graph *);
 int apportion_ants(path *, int ants);
 

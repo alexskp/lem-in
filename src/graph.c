@@ -93,14 +93,17 @@ path *create_paths(graph *anthill)
 
 path *get_paths(graph *anthill)
 {
+    path *alt_paths;
     path *paths = create_paths(anthill);
-    search_alternative(anthill, paths);
-    hard_reset_dists(anthill);
-    paths = create_paths(anthill);
+    if ((alt_paths = search_alternative(anthill, paths)))
+    {
+        free_paths(&paths);
+        return alt_paths;
+    }
     return paths;
 }
 
-void search_alternative(graph *anthill, path *paths)
+path *search_alternative(graph *anthill, path *paths)
 {
     int original = apportion_ants(paths, anthill->ants);
 
@@ -168,7 +171,12 @@ void search_alternative(graph *anthill, path *paths)
         }
     }
     if (tmp1)
+    {
         unlink(tmp1, tmp2);
+        return alt_paths;
+    }
+    else
+        return NULL;
 }
 
 int apportion_ants(path *paths, int ants)
