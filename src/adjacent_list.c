@@ -64,14 +64,10 @@ adj *add_adj(adj **head, room *adj_room)
 {
     if (!get_adj(*head, adj_room))
     {
-        adj *last = get_last_adj(*head);
         adj *new = (adj *)malloc(sizeof(adj));
         new->adj_room = adj_room;
-        new->next = NULL;
-        if (last)
-            last->next = new;
-        else
-            (*head) = new;
+        new->next = (*head);
+        (*head) = new;
         return new;
     }
     else

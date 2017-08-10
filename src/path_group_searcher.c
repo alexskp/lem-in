@@ -2,33 +2,6 @@
 #include "lem-in.h"
 
 
-void search_path(graph *anthill)
-{
-    elem *queue = NULL;
-    room *current;
-    adj  *adj_room;
-    int i = 0;
-
-    reset_dists(anthill);
-    push(&queue, anthill->start_room);
-
-    while (queue)
-    {
-        current = pop(&queue);
-        i = 0;
-        while ((adj_room = get_nth_adj(current->adjacent, i)))
-          {
-            if (adj_room->adj_room->dist != -1 &&
-                adj_room->adj_room->dist > current->dist + 1)
-            {
-                adj_room->adj_room->dist = current->dist + 1;
-                push(&queue, adj_room->adj_room);
-            }
-            i++;
-        }
-    }
-}
-
 adj *get_path(graph *anthill)
 {
     int j;
@@ -36,7 +9,7 @@ adj *get_path(graph *anthill)
     adj *path_node = NULL;
     adj *adjacent;
 
-    search_path(anthill);
+    scan_shortest_path(anthill);
     if (nth_room->dist == INF)
         return NULL;
 
@@ -69,7 +42,7 @@ adj *get_path(graph *anthill)
     return path_node;
 }
 
-path *create_paths(graph *anthill)
+path *create_path_group(graph *anthill)
 {
     path *paths = NULL;
     adj *path_node;
@@ -88,22 +61,33 @@ path *create_paths(graph *anthill)
         add_path(&paths, path_node, len);
         reset_dists(anthill);
     }
+    hard_reset_dists(anthill);
     return paths;
 }
 
-path *get_paths(graph *anthill)
+path *get_path_group(graph *anthill)
 {
-    path *paths = search_optimal_paths(anthill);
-
+    path *paths;
+    int i = 0;
+    while (get_nth_adj(anthill->start_room->adjacent, i++))
+        paths = search_optimal_path_group(anthill);
     return paths;
 }
 
-path *search_optimal_paths(graph *anthill)
+path *search_optimal_path_group(graph *anthill)
 {
-    path *paths = create_paths(anthill);
-    apportion_ants(paths, anthill->ants);
-    int original = max_steps(paths);
-
+    path *paths = create_path_group(anthill);
+    int original;
+    if (paths)
+    {
+        apportion_ants(paths, anthill->ants);
+        original = max_steps(paths);
+    }
+    else
+    {
+        free_graph(anthill);
+        error("Error! There are no paths.");
+    }
     path *nth_path;
     adj *nth_node;
     path *alt_paths = NULL;
@@ -141,8 +125,7 @@ path *search_optimal_paths(graph *anthill)
                 if (nth_node->next)
                 {
                     unlink(nth_node->adj_room, nth_node->next->adj_room);
-                    hard_reset_dists(anthill);
-                    alt_paths = create_paths(anthill);
+                    alt_paths = create_path_group(anthill);
                     if (spec_case)
                     {
                         spec_path = NULL;
@@ -170,9 +153,10 @@ path *search_optimal_paths(graph *anthill)
     }
     if (tmp1)
     {
+        free_paths(&paths);
         unlink(tmp1, tmp2);
-        hard_reset_dists(anthill);
-        alt_paths = create_paths(anthill);
+        alt_paths = create_path_group(anthill);
+        apportion_ants(alt_paths, anthill->ants);
         return alt_paths;
     }
     else
@@ -182,81 +166,37 @@ path *search_optimal_paths(graph *anthill)
 void apportion_ants(path *paths, int ants)
 {
     int i = 0;
-    int max_len = 0;
-    int min_len = INF;
-    int len_diff;
     int num_of_paths = 0;
-    int steps;
-    int ants_per_path;
-    int ditributed_ants = 0;
-    int part;
-    int rest;
     int min_steps = INF;
     int min_steps_path;
     path *nth_path;
 
     while ((nth_path = get_nth_path(paths, i++)))
-    {
-        if (nth_path->len > max_len)
-            max_len = nth_path->len;
-        if (nth_path->len < min_len)
-            min_len = nth_path->len;
         num_of_paths++;
-    }
 
     if (num_of_paths == 1)
     {
         paths->ants = ants;
+        paths->steps = ants + paths->len - 1;
+        return;
     }
 
-    if (max_len == min_len)
-        len_diff = 1;
-    else
-        len_diff = max_len - min_len;
-
-    part = ants / num_of_paths;
-    i = 0;
-    while ((nth_path = get_nth_path(paths, i++)))
-    {
-        ants_per_path = part + (max_len + 1 - nth_path->len - len_diff);
-        if (nth_path->len == 1)
-            ants_per_path--;
-        nth_path->ants = ants_per_path;
-        ditributed_ants += ants_per_path;
-    }
-
-    rest = ants - ditributed_ants;
-    while (rest)
+    while (ants)
     {
         i = 0;
         while ((nth_path = get_nth_path(paths, i++)))
         {
-            steps = nth_path->len + nth_path->ants - 1;
-            if (steps < min_steps)
+            nth_path->steps = nth_path->len + nth_path->ants - 1;
+            if (nth_path->steps < min_steps)
             {
                 min_steps_path = i - 1;
-                min_steps = steps;
+                min_steps = nth_path->steps;
             }
         }
         min_steps = INF;
         nth_path = get_nth_path(paths, min_steps_path);
         nth_path->ants++;
-        rest--;
+        nth_path->steps++;
+        ants--;
     }
-}
-
-int max_steps(path *paths)
-{
-    path *nth_path;
-    int i = 0;
-    int steps;
-    int max_steps = 0;
-
-    while ((nth_path = get_nth_path(paths, i++)))
-    {
-        steps = nth_path->ants + nth_path->len - 1;
-        if (steps > max_steps)
-            max_steps = steps;
-    }
-    return steps;
 }

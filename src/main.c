@@ -6,10 +6,11 @@ void print_graph(graph *);
 int main(void)
 {
     graph *anthill = parse_map();
-    path *paths = get_paths(anthill);
+    path *paths = get_path_group(anthill);
 
-    print_paths(paths);
+    // print_path_group(paths);
 
+    print_steps(paths, anthill->ants);
 
     free_graph(anthill);
     free_paths(&paths);

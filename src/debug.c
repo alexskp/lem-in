@@ -2,26 +2,35 @@
 #include "lem-in.h"
 
 
-void print_steps()
+int malloc_counter = 0;
+
+void *my_malloc(size_t size)
 {
-    // TODO
+    malloc_counter++;
+    return malloc(size);
 }
 
-void print_paths(path *paths)
+void my_free(void *ptr)
+{
+    free(ptr);
+    malloc_counter--;
+}
+
+void print_path_group(path *paths)
 {
     path *nth_path;
     adj *nth_node;
 
-    int i = 0;
-    int j = 0;
+    int i, j;
 
+    i = 0;
     while ((nth_path = get_nth_path(paths, i++)))
     {
-        j = nth_path->len;
+        j = 0;
         printf("LENGTH: %d ANTS: %d\t", nth_path->len, nth_path->ants);
-        while ((nth_node = get_nth_adj(nth_path->path_node, j--)))
+        while ((nth_node = get_nth_adj(nth_path->path_node, j++)))
         {
-            printf("%s%s", nth_node->adj_room->name, (j >= 0) ? " - " : "\n");
+            printf("%s%s", nth_node->adj_room->name, (j <= nth_path->len) ? " - " : "\n");
         }
     }
     printf("Steps: %d\n", max_steps(paths));

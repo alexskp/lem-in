@@ -21,18 +21,6 @@ path *get_last_path(path *head)
     return head;
 }
 
-path *get_shortest_path(path *head)
-{
-    path *min;
-    int len = INF;
-    while (head->next)
-    {
-        if (head->len < len)
-            min = head;
-    }
-    return  min;
-}
-
 path *add_path(path **head, adj *path_node, int len)
 {
     path *last = get_last_path(*head);
@@ -40,6 +28,7 @@ path *add_path(path **head, adj *path_node, int len)
     new->path_node = path_node;
     new->len = len;
     new->ants = 0;
+    new->steps = 0;
     new->next = NULL;
     if (last)
         last->next = new;

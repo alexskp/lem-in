@@ -43,6 +43,7 @@ typedef struct          path
 {
     int                 len;
     int                 ants;
+    int                 steps;
     adj                 *path_node;
     struct path         *next;
 } path;
@@ -88,33 +89,34 @@ void push(elem **head, room* content);
 room *pop(elem **head);
 
 /*
-*   graph.c
+*   path_group_searcher.c
 */
-void search_path(graph *);
 adj *get_path(graph *);
-path *get_paths(graph *);
-path *search_optimal_paths(graph *);
-path *create_paths(graph *);
+path *get_path_group(graph *);
+path *search_optimal_path_group(graph *);
+path *create_path_group(graph *);
 void apportion_ants(path *, int ants);
-int max_steps(path *);
 
 /*
 *   graph_tools.c
 */
+void scan_shortest_path(graph *);
 void link(room *, room *);
 void unlink(room *, room *);
 void reset_dists(graph *);
 void hard_reset_dists(graph *);
+int max_steps(path *);
 
 /*
-*   graph_output.c
+/   step_generator.c
+*/
+void print_steps(path *, int ants);
+
+/*
+*   debug.c
 */
 void print_graph(graph *);
-void print_paths(path *);
-
-/*
-*   leak_control.c
-*/
+void print_path_group(path *);
 extern int malloc_counter;
 void *my_maloc(size_t size);
 void my_free(void *ptr);
