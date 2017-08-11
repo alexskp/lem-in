@@ -67,10 +67,13 @@ path *create_path_group(graph *anthill)
 
 path *get_path_group(graph *anthill)
 {
-    path *paths;
+    path *paths = NULL;
     int i = 0;
     while (get_nth_adj(anthill->start_room->adjacent, i++))
+    {
+        free_paths(&paths);
         paths = search_optimal_path_group(anthill);
+    }
     return paths;
 }
 
