@@ -1,5 +1,5 @@
 # lem-in
-------------------------------
+
 **Lem-in** is a project task from from UNIT Factory school. The program will receive the data describing the ant farm from the standard output in the following format:
    * number_of_ants
    * the_rooms
