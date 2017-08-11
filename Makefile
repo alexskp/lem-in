@@ -7,12 +7,20 @@ CFLAGS = -g -c -Wall -Werror -Wextra
 
 SRCDIR = src
 
-BUILDDIR = obj
+SRC = main.c \
+	   adjacent_list.c \
+	   debug.c \
+	   error.c \
+	   free.c \
+	   graph_tools.c \
+	   parser.c \
+	   path_group_searcher.c \
+	   path_list.c \
+	   queue.c \
+	   room_list.c \
+	   step_generator.c
 
-SRC := $(wildcard $(SRCDIR)/*.c)
-OBJ := $(patsubst $(SRCDIR)/%, %, $(SRC))
-OBJ := $(patsubst %.c, %.o, $(OBJ))
-OBJ := $(addprefix $(BUILDDIR)/,$(OBJ))
+OBJ = $(addprefix $(SRCDIR)/, $(SRC:.c=.o))
 
 .PHONY: all
 all: $(EXEC)
@@ -20,7 +28,7 @@ all: $(EXEC)
 $(EXEC): $(OBJ)
 	$(CC) -o $(EXEC) $(OBJ)
 
-$(BUILDDIR)/%.o: $(SRCDIR)/%.c
+%.o: %.c
 	$(CC) $(CFLAGS) -o $@ $<
 
 
