@@ -9,6 +9,7 @@ int main(void)
     path *paths = get_path_group(anthill);
 
     // print_path_group(paths);
+    // printf("\n");
 
     print_steps(paths, anthill->ants);
 

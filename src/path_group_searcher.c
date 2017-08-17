@@ -48,6 +48,10 @@ path *create_path_group(graph *anthill)
     adj *path_node;
     adj *checker;
     int len;
+    int spec_case = 0;
+
+    if (get_adj(anthill->start_room->adjacent, anthill->end_room))
+        spec_case = 1;
 
     while ((path_node = get_path(anthill)))
     {
@@ -62,6 +66,9 @@ path *create_path_group(graph *anthill)
         reset_dists(anthill);
     }
     hard_reset_dists(anthill);
+
+    if (spec_case)
+        link(anthill->start_room, anthill->end_room);
     return paths;
 }
 
@@ -80,6 +87,7 @@ path *get_path_group(graph *anthill)
 path *search_optimal_path_group(graph *anthill)
 {
     path *paths = create_path_group(anthill);
+
     int original;
     if (paths)
     {
@@ -90,32 +98,17 @@ path *search_optimal_path_group(graph *anthill)
     {
         free_graph(anthill);
         error("Error! There are no paths.");
-    }
+    };
+
     path *nth_path;
     adj *nth_node;
     path *alt_paths = NULL;
-
-    int spec_case = 0;
-    adj *spec_path = NULL;
-    room *room_1 = NULL;
-    room *room_2 = NULL;
 
     room *tmp1 = NULL;
     room *tmp2 = NULL;
 
     int i = 0;
     int j = 0;
-
-    while ((nth_path = get_nth_path(paths, i++)))
-    {
-        if (nth_path->len == 1)
-        {
-            spec_case = 1;
-            room_1 = nth_path->path_node->adj_room;
-            room_2 = nth_path->path_node->next->adj_room;
-            break;
-        }
-    }
 
     i = 0;
     while ((nth_path = get_nth_path(paths, i++)))
@@ -129,13 +122,7 @@ path *search_optimal_path_group(graph *anthill)
                 {
                     unlink(nth_node->adj_room, nth_node->next->adj_room);
                     alt_paths = create_path_group(anthill);
-                    if (spec_case)
-                    {
-                        spec_path = NULL;
-                        add_adj(&spec_path, room_1);
-                        add_adj(&spec_path, room_2);
-                        add_path(&alt_paths, spec_path, 1);
-                    }
+
                     if (!alt_paths)
                     {
                         link(nth_node->adj_room, nth_node->next->adj_room);
@@ -163,7 +150,9 @@ path *search_optimal_path_group(graph *anthill)
         return alt_paths;
     }
     else
+    {
         return paths;
+    }
 }
 
 void apportion_ants(path *paths, int ants)
