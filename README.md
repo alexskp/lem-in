@@ -85,3 +85,10 @@ Console output:
     L1-1 L2-1 L3-2
     L3-1
     alex@acer:~/Dropbox/dev/lem-in$
+
+For more comfortable viewing the program result you can use visualise.py - graphical visualiser written in python. You can get it from 
+[alushenk's](https://github.com/alushenk/lem_python_in) lem-in repository.
+
+usage example:
+
+./lem-in < maps/map | ./visualise.py
